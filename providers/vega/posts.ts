@@ -90,8 +90,8 @@ async function posts(
         const post = {
           title: (
             $(element)
-              ?.find("a")
-              ?.attr("title")
+              ?.find(".entry-title")
+              ?.text()
               ?.replace("Download", "")
               ?.match(/^(.*?)\s*\((\d{4})\)|^(.*?)\s*\((Season \d+)\)/)?.[0] ||
             $(element)?.find("a")?.attr("title")?.replace("Download", "") ||
