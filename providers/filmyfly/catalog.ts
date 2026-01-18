@@ -9,7 +9,7 @@ export const catalog = [
   },
   {
     title: "Hollywood",
-    filter: "/page-cat/9/New-Hollywood-Hindi-Dubbed-Movie-2016-2025.html",
+    filter: "/page-cat/4/Hollywood-Hindi-Movies.html",
   },
 ];
 
