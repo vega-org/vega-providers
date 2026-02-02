@@ -1,10 +1,8 @@
 import { Stream, ProviderContext } from "../types";
-import { hubcloudExtractor } from "../extractors/hubcloud";
-import { gdflixExtractor } from "../extractors/gdflix";
 
 async function extractKmhdLink(
   katlink: string,
-  providerContext: ProviderContext,
+  providerContext: ProviderContext
 ) {
   const { axios } = providerContext;
   const res = await axios.get(katlink, {
@@ -15,7 +13,7 @@ async function extractKmhdLink(
   const data = res.data;
   const hubDriveRes = data.match(/hubdrive_res:\s*"([^"]+)"/)[1];
   const hubDriveLink = data.match(
-    /hubdrive_res\s*:\s*{[^}]*?link\s*:\s*"([^"]+)"/,
+    /hubdrive_res\s*:\s*{[^}]*?link\s*:\s*"([^"]+)"/
   )[1];
   return hubDriveLink + hubDriveRes;
 }
@@ -29,22 +27,17 @@ export const getStream = async function ({
   signal: AbortSignal;
   providerContext: ProviderContext;
 }): Promise<Stream[]> {
-  const { axios, cheerio, commonHeaders } = providerContext;
+  const { axios, cheerio, extractors } = providerContext;
+  const { hubcloudExtracter, gdFlixExtracter } = extractors;
   const streamLinks: Stream[] = [];
   console.log("katGetStream", link);
   try {
     if (link.includes("gdflix")) {
-      return await gdflixExtractor(link, signal, axios, cheerio, commonHeaders);
+      return await gdFlixExtracter(link, signal);
     }
     if (link.includes("kmhd")) {
       const hubcloudLink = await extractKmhdLink(link, providerContext);
-      return await hubcloudExtractor(
-        hubcloudLink,
-        signal,
-        axios,
-        cheerio,
-        commonHeaders,
-      );
+      return await hubcloudExtracter(hubcloudLink, signal);
     }
     if (link.includes("gdflix")) {
       // resume link
@@ -101,13 +94,7 @@ export const getStream = async function ({
       }
       return streamLinks;
     }
-    const stereams = await hubcloudExtractor(
-      link,
-      signal,
-      axios,
-      cheerio,
-      commonHeaders,
-    );
+    const stereams = await hubcloudExtracter(link, signal);
     return stereams;
   } catch (error: any) {
     console.log("katgetStream error: ", error);

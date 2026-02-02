@@ -1,1 +1,1 @@
-exports.catalog=void 0,exports.catalog=[{title:"Trending",filter:""},{title:"Movies",filter:"genre/hollywood/"}];
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.catalog=void 0,exports.catalog=[{title:"Trending",filter:""},{title:"Movies",filter:"genre/hollywood/"}];

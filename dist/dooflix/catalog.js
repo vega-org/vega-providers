@@ -1,1 +1,1 @@
-exports.genres=exports.catalog=void 0,exports.catalog=[{title:"Series",filter:"/rest-api//v130/tvseries"},{title:"Movies",filter:"/rest-api//v130/movies"}],exports.genres=[];
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.genres=exports.catalog=void 0,exports.catalog=[{title:"Series",filter:"/rest-api//v130/tvseries"},{title:"Movies",filter:"/rest-api//v130/movies"}],exports.genres=[];

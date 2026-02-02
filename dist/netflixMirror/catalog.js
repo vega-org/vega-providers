@@ -1,1 +1,1 @@
-exports.genres=exports.catalog=void 0,exports.catalog=[{title:"Home",filter:"/mobile/home?app=1"},{title:"Series",filter:"/mobile/series"},{title:"Movies",filter:"/mobile/movies"}],exports.genres=[];
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.genres=exports.catalog=void 0,exports.catalog=[{title:"Home",filter:"/mobile/home?app=1"},{title:"Series",filter:"/mobile/series"},{title:"Movies",filter:"/mobile/movies"}],exports.genres=[];

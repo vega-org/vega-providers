@@ -1,1 +1,1 @@
-exports.genres=exports.catalog=void 0,exports.catalog=[{title:"Movies",filter:"/movies/"},{title:"TV Shows",filter:"/tvs/"},{title:"K-Drama",filter:"/kdrama/"},{title:"Asian Drama",filter:"/asiandrama/"},{title:"Misc",filter:"/misc/"}],exports.genres=[];
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.genres=exports.catalog=void 0,exports.catalog=[{title:"Movies",filter:"/movies/"},{title:"TV Shows",filter:"/tvs/"},{title:"K-Drama",filter:"/kdrama/"},{title:"Asian Drama",filter:"/asiandrama/"},{title:"Misc",filter:"/misc/"}],exports.genres=[];

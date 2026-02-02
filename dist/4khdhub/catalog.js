@@ -1,1 +1,1 @@
-exports.genres=exports.catalog=void 0,exports.catalog=[{title:"Home",filter:""},{title:"Latest TV Shows",filter:"/category/series"},{title:"Anime",filter:"/category/anime"},{title:"4K HDR",filter:"/category/-2160p-HDR"}],exports.genres=[];
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.genres=exports.catalog=void 0,exports.catalog=[{title:"Home",filter:""},{title:"Latest TV Shows",filter:"/category/series"},{title:"Anime",filter:"/category/anime"},{title:"4K HDR",filter:"/category/-2160p-HDR"}],exports.genres=[];

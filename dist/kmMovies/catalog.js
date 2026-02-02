@@ -1,1 +1,1 @@
-exports.catalog=void 0,exports.catalog=[{title:"Latest",filter:""},{title:"Bollywood",filter:"category/movies/"},{title:"Dual",filter:"category/dual-audio/"}];
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.catalog=void 0,exports.catalog=[{title:"Latest",filter:""},{title:"Bollywood",filter:"category/movies/"},{title:"Dual",filter:"category/dual-audio/"}];

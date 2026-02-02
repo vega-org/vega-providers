@@ -1,6 +1,4 @@
 import { Stream, ProviderContext } from "../types";
-import { hubcloudExtractor } from "../extractors/hubcloud";
-import { gdflixExtractor } from "../extractors/gdflix";
 
 export const getStream = async ({
   link,
@@ -12,7 +10,6 @@ export const getStream = async ({
   signal: AbortSignal;
   providerContext: ProviderContext;
 }): Promise<Stream[]> => {
-  const { axios, cheerio, commonHeaders: headers } = providerContext;
   try {
     let newLink = link;
     console.log("getStream 1", link);
@@ -42,7 +39,7 @@ export const getStream = async ({
       });
       const html = await res.text();
       const refreshMetaMatch = html.match(
-        /<meta\s+http-equiv="refresh"\s+content="[^"]*url=([^"]+)"/i,
+        /<meta\s+http-equiv="refresh"\s+content="[^"]*url=([^"]+)"/i
       );
       if (refreshMetaMatch && refreshMetaMatch[1]) {
         link = refreshMetaMatch[1];
@@ -53,8 +50,8 @@ export const getStream = async ({
     console.log("getStream 2", link);
 
     if (link.includes("luxedrive")) {
-      const res = await axios.get(link, { signal });
-      const $ = cheerio.load(res.data);
+      const res = await providerContext.axios.get(link, { signal });
+      const $ = providerContext.cheerio.load(res.data);
       const hubcloudLink = $("a.btn.hubcloud").attr("href");
       if (hubcloudLink) {
         newLink = hubcloudLink;
@@ -66,24 +63,18 @@ export const getStream = async ({
       }
     }
     if (newLink.includes("flix")) {
-      const sreams = await gdflixExtractor(
+      const sreams = await providerContext.extractors.gdFlixExtracter(
         newLink,
-        signal,
-        axios,
-        cheerio,
-        headers,
+        signal
       );
       return sreams;
     }
-    const res2 = await axios.get(newLink, { signal });
+    const res2 = await providerContext.axios.get(newLink, { signal });
     const data2 = res2.data;
     const hcLink = data2.match(/location\.replace\('([^']+)'/)?.[1] || newLink;
-    const hubCloudLinks = await hubcloudExtractor(
+    const hubCloudLinks = await providerContext.extractors.hubcloudExtracter(
       hcLink.includes("https://hubcloud") ? hcLink : newLink,
-      signal,
-      axios,
-      cheerio,
-      headers,
+      signal
     );
     return hubCloudLinks;
   } catch (err) {
