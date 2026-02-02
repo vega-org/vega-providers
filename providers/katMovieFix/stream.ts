@@ -1,4 +1,5 @@
 import { ProviderContext, Stream } from "../types";
+import { hubcloudExtractor } from "../extractors/hubcloud";
 
 const headers = {
   Accept:
@@ -22,8 +23,7 @@ export async function getStream({
   signal: AbortSignal;
   providerContext: ProviderContext;
 }) {
-  const { axios, cheerio, extractors } = providerContext;
-  const { hubcloudExtracter } = extractors;
+  const { axios, cheerio, commonHeaders } = providerContext;
 
   try {
     const streamLinks: Stream[] = [];
@@ -43,7 +43,13 @@ export async function getStream({
     });
 
     // --- hubcloud extraction ---
-    const hubcloudStreams = await hubcloudExtracter(link, signal);
+    const hubcloudStreams = await hubcloudExtractor(
+      link,
+      signal,
+      axios,
+      cheerio,
+      commonHeaders,
+    );
     streamLinks.push(...hubcloudStreams);
 
     return streamLinks;

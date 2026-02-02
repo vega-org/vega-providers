@@ -1,4 +1,5 @@
 import { Stream, ProviderContext } from "../types";
+import { gdflixExtractor } from "../extractors/gdflix";
 
 export const getStream = async function ({
   link,
@@ -10,19 +11,23 @@ export const getStream = async function ({
   signal: AbortSignal;
   providerContext: ProviderContext;
 }): Promise<Stream[]> {
+  const { axios, cheerio, commonHeaders: headers } = providerContext;
   try {
-    const res = await providerContext.axios.get(link, { signal });
+    const res = await axios.get(link, { signal });
     const data = res.data;
-    const $ = providerContext.cheerio.load(data);
+    const $ = cheerio.load(data);
     const streams: Stream[] = [];
     const elements = $(".button2,.button1,.button3,.button4,.button").toArray();
     const promises = elements.map(async (element) => {
       const title = $(element).text();
       let link = $(element).attr("href");
       if (title.includes("GDFLIX") && link) {
-        const gdLinks = await providerContext.extractors.gdFlixExtracter(
+        const gdLinks = await gdflixExtractor(
           link,
-          signal
+          signal,
+          axios,
+          cheerio,
+          headers,
         );
         streams.push(...gdLinks);
       }

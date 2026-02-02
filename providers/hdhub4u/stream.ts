@@ -1,4 +1,5 @@
 import { ProviderContext } from "../types";
+import { hubcloudExtractor } from "../extractors/hubcloud";
 
 export async function getStream({
   link,
@@ -10,13 +11,7 @@ export async function getStream({
   signal: AbortSignal;
   providerContext: ProviderContext;
 }) {
-  const {
-    axios,
-    cheerio,
-    extractors,
-    commonHeaders: headers,
-  } = providerContext;
-  const { hubcloudExtracter } = extractors;
+  const { axios, cheerio, commonHeaders: headers } = providerContext;
   let hubdriveLink = "";
   if (link.includes("hubdrive")) {
     const hubdriveRes = await axios.get(link, { headers, signal });
@@ -39,23 +34,36 @@ export async function getStream({
       redirectLinkText.match(
         /href="(https:\/\/hubcloud\.[^\/]+\/drive\/[^"]+)"/,
       )[1];
+    console.log("hubdriveLink", hubdriveLink);
     if (hubdriveLink.includes("hubdrive")) {
       const hubdriveRes = await axios.get(hubdriveLink, { headers, signal });
       const hubdriveText = hubdriveRes.data;
       const $$ = cheerio.load(hubdriveText);
       hubdriveLink =
-        $$(".btn.btn-primary.btn-user.btn-success1.m-1").attr("href") ||
-        hubdriveLink;
+        $$(".btn.btn-primary.btn-user").attr("href") || hubdriveLink;
     }
+    console.log("hubdriveLink2", hubdriveLink);
   }
-  const hubdriveLinkRes = await axios.get(hubdriveLink, { headers, signal });
-  const hubcloudText = hubdriveLinkRes.data;
-  const hubcloudLink =
-    hubcloudText.match(
-      /<META HTTP-EQUIV="refresh" content="0; url=([^"]+)">/i,
-    )?.[1] || hubdriveLink;
+  let hubcloudLink = hubdriveLink;
   try {
-    return await hubcloudExtracter(hubcloudLink, signal);
+    const hubdriveLinkRes = await axios.get(hubdriveLink, { headers, signal });
+    const hubcloudText = hubdriveLinkRes.data;
+    hubcloudLink =
+      hubcloudText.match(
+        /<META HTTP-EQUIV="refresh" content="0; url=([^"]+)">/i,
+      )?.[1] || hubdriveLink;
+  } catch (error: any) {
+    console.log("Error fetching hubdrive link:", error?.message);
+  }
+  console.log("hubcloudLink", hubcloudLink);
+  try {
+    return await hubcloudExtractor(
+      hubcloudLink,
+      signal,
+      axios,
+      cheerio,
+      headers,
+    );
   } catch (error: any) {
     console.log("hd hub 4 getStream error: ", error);
     return [];

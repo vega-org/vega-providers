@@ -135,13 +135,4 @@ export type ProviderContext = {
   getBaseUrl: (providerValue: string) => Promise<string>;
   commonHeaders: Record<string, string>;
   cheerio: typeof cheerio;
-  extractors: {
-    hubcloudExtracter: (link: string, signal: AbortSignal) => Promise<Stream[]>;
-    gofileExtracter: (id: string) => Promise<{
-      link: string;
-      token: string;
-    }>;
-    superVideoExtractor: (data: any) => Promise<string>;
-    gdFlixExtracter: (link: string, signal: AbortSignal) => Promise<Stream[]>;
-  };
 };
