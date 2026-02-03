@@ -1,4 +1,5 @@
 import { Stream, ProviderContext } from "../types";
+import { gofileExtractor } from "../extractors/gofile";
 
 function LALLJLutmoZpvvbikjaWM(str: string): ArrayBuffer {
   var buf = new ArrayBuffer(str.length * 2);
@@ -23,13 +24,7 @@ export const getStream = async function ({
   link: string;
   providerContext: ProviderContext;
 }): Promise<Stream[]> {
-  const {
-    axios,
-    cheerio,
-    commonHeaders: headers,
-    extractors,
-  } = providerContext;
-  const { gofileExtracter } = extractors;
+  const { axios, cheerio, commonHeaders: headers } = providerContext;
   function generateMessageToken(baseUrlL: string): string {
     const hostname = baseUrlL?.replace(/https?:\/\//, "").split("/")[0];
     console.log("generateMessageToken hostname", hostname);
@@ -170,14 +165,15 @@ export const getStream = async function ({
           id: idData,
         });
         console.log("idData", idData);
-      })
+      }),
     );
     await Promise.all(
       secondIdList.map(async (id) => {
         const idRes = await axios.post(`${baseUrl}/tmp/${id.id}`);
         if (idRes.data.ppd["gofile.io"]) {
-          const goRes = await gofileExtracter(
-            idRes.data.ppd["gofile.io"].link.split("/").pop()
+          const goRes = await gofileExtractor(
+            idRes.data.ppd["gofile.io"].link.split("/").pop(),
+            axios,
           );
           console.log("link", goRes.link);
           if (goRes.link) {
@@ -194,7 +190,7 @@ export const getStream = async function ({
             });
           }
         }
-      })
+      }),
     );
 
     return streamLinks;

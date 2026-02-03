@@ -3,14 +3,10 @@ const cheerio = require("cheerio");
 const fs = require("fs");
 const path = require("path");
 
-// Load extractors and utilities
+// Load utilities
 let providerContext;
 try {
   const { getBaseUrl } = require("./dist/getBaseUrl.js");
-  const { hubcloudExtracter } = require("./dist/hubcloudExtractor.js");
-  const { gofileExtracter } = require("./dist/gofileExtracter.js");
-  const { superVideoExtractor } = require("./dist/superVideoExtractor.js");
-  const { gdFlixExtracter } = require("./dist/gdFlixExtractor.js");
 
   providerContext = {
     axios,
@@ -20,17 +16,11 @@ try {
       "User-Agent":
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     },
-    extractors: {
-      hubcloudExtracter,
-      gofileExtracter,
-      superVideoExtractor,
-      gdFlixExtracter,
-    },
-    Crypto: {},
+    Aes: {},
   };
 } catch (error) {
   console.log(
-    "⚠️  Could not load provider context. Run 'npm run build' first."
+    "⚠️  Could not load provider context. Run 'npm run build' first.",
   );
   providerContext = null;
 }
@@ -112,7 +102,7 @@ class ProviderTester {
 
     if (disabledProviders.length > 0) {
       console.log(
-        `\n⏭️  Skipping disabled providers: ${disabledProviders.join(", ")}`
+        `\n⏭️  Skipping disabled providers: ${disabledProviders.join(", ")}`,
       );
     }
 
@@ -181,7 +171,7 @@ class ProviderTester {
       // Pick a random filter
       const randomFilter = pickRandom(allFilters);
       console.log(
-        `   🎲 Selected random filter: "${randomFilter.title}" (${randomFilter.filter})`
+        `   🎲 Selected random filter: "${randomFilter.title}" (${randomFilter.filter})`,
       );
 
       // Step 2: Test getPosts with random filter
@@ -210,10 +200,10 @@ class ProviderTester {
       // Pick random posts to test
       const postsToTest = pickRandom(
         posts,
-        Math.min(this.postsToTest, posts.length)
+        Math.min(this.postsToTest, posts.length),
       );
       console.log(
-        `   🎲 Selected ${postsToTest.length} random posts for meta testing`
+        `   🎲 Selected ${postsToTest.length} random posts for meta testing`,
       );
 
       // Step 3: Test getMeta with random posts
@@ -237,14 +227,14 @@ class ProviderTester {
 
           if (!meta || !meta.linkList) {
             console.log(
-              `      ⚠️  Meta returned but linkList is empty/missing`
+              `      ⚠️  Meta returned but linkList is empty/missing`,
             );
             continue;
           }
 
           metaResults.push({ post, meta });
           console.log(
-            `      ✅ Got meta: type=${meta.type}, links=${meta.linkList.length}`
+            `      ✅ Got meta: type=${meta.type}, links=${meta.linkList.length}`,
           );
 
           // Show link structure
@@ -255,7 +245,7 @@ class ProviderTester {
             console.log(
               `         [${i + 1}] ${link.title.substring(0, 30)} - ${
                 hasEpisodes ? "📺 Episodes" : ""
-              }${hasDirectLinks ? "🎬 Direct" : ""}`
+              }${hasDirectLinks ? "🎬 Direct" : ""}`,
             );
           });
         } catch (err) {
@@ -296,7 +286,7 @@ class ProviderTester {
         if (episodesModule && episodesModule.getEpisodes) {
           const testEpisodeLink = pickRandom(episodeLinks);
           console.log(
-            `   🎲 Testing episodes from: ${testEpisodeLink.link.title}`
+            `   🎲 Testing episodes from: ${testEpisodeLink.link.title}`,
           );
           console.log(`      URL: ${testEpisodeLink.link.episodesLink}`);
 
@@ -342,7 +332,7 @@ class ProviderTester {
                       console.log(
                         `         [${i + 1}] ${s.server} - ${
                           s.quality || "unknown"
-                        } quality`
+                        } quality`,
                       );
                     });
                   } else {
@@ -379,11 +369,11 @@ class ProviderTester {
         const testDirectLink = pickRandom(directLinks);
         const linksToTest = pickRandom(
           testDirectLink.link.directLinks,
-          Math.min(this.linksToTest, testDirectLink.link.directLinks.length)
+          Math.min(this.linksToTest, testDirectLink.link.directLinks.length),
         );
 
         console.log(
-          `   🎲 Testing ${linksToTest.length} random direct link(s)`
+          `   🎲 Testing ${linksToTest.length} random direct link(s)`,
         );
 
         const streamModule = this.loadModule(providerName, "stream");
@@ -414,7 +404,7 @@ class ProviderTester {
                   console.log(
                     `         [${i + 1}] ${s.server} - ${
                       s.quality || "unknown"
-                    } quality`
+                    } quality`,
                   );
                 });
                 break; // One success is enough
@@ -489,7 +479,7 @@ class ProviderTester {
     console.log(
       `\n   ${statusIcon} Overall: ${
         result.summary.failed === 0 ? "PASSED" : "FAILED"
-      }`
+      }`,
     );
 
     return result;
@@ -529,7 +519,7 @@ class ProviderTester {
         }
       } catch (error) {
         console.log(
-          `\n❌ Critical error testing ${provider}: ${error.message}`
+          `\n❌ Critical error testing ${provider}: ${error.message}`,
         );
         failed++;
         results[provider] = { error: error.message };

@@ -1,1 +1,1 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.catalog=void 0,exports.catalog=[{title:"Trending",filter:""},{title:"JIo-Studios",filter:"category/jio-studios/"}];
+exports.catalog=void 0,exports.catalog=[{title:"Trending",filter:""},{title:"JIo-Studios",filter:"category/jio-studios/"}];

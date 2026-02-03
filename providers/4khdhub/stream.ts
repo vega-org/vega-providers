@@ -1,4 +1,5 @@
 import { ProviderContext } from "../types";
+import { hubcloudExtractor } from "../extractors/hubcloud";
 
 export async function getStream({
   link,
@@ -10,13 +11,7 @@ export async function getStream({
   signal: AbortSignal;
   providerContext: ProviderContext;
 }) {
-  const {
-    axios,
-    cheerio,
-    extractors,
-    commonHeaders: headers,
-  } = providerContext;
-  const { hubcloudExtracter } = extractors;
+  const { axios, cheerio, commonHeaders: headers } = providerContext;
   let hubdriveLink = "";
   if (link.includes("hubdrive")) {
     const hubdriveRes = await axios.get(link, { headers, signal });
@@ -33,7 +28,13 @@ export async function getStream({
     const redirectLink = await getRedirectLinks(link, signal, headers);
     console.log("redirectLink", redirectLink);
     if (redirectLink.includes("hubcloud") || redirectLink.includes("/drive/")) {
-      return await hubcloudExtracter(redirectLink, signal);
+      return await hubcloudExtractor(
+        redirectLink,
+        signal,
+        axios,
+        cheerio,
+        headers,
+      );
     }
     const redirectLinkRes = await axios.get(redirectLink, { headers, signal });
     const redirectLinkText = redirectLinkRes.data;
@@ -59,7 +60,13 @@ export async function getStream({
       /<META HTTP-EQUIV="refresh" content="0; url=([^"]+)">/i,
     )?.[1] || hubdriveLink;
   try {
-    return await hubcloudExtracter(hubcloudLink, signal);
+    return await hubcloudExtractor(
+      hubcloudLink,
+      signal,
+      axios,
+      cheerio,
+      headers,
+    );
   } catch (error: any) {
     console.log("hd hub 4 getStream error: ", error);
     return [];

@@ -1,4 +1,5 @@
 import { ProviderContext, Stream } from "../types";
+import { superVideoExtractor } from "../extractors/supeVideo";
 
 export const getStream = async function ({
   link: id,
@@ -10,8 +11,7 @@ export const getStream = async function ({
   providerContext: ProviderContext;
 }): Promise<Stream[]> {
   try {
-    const { axios, cheerio, extractors, commonHeaders } = providerContext;
-    const { superVideoExtractor } = extractors;
+    const { axios, cheerio, commonHeaders } = providerContext;
     async function ExtractGuardahd({
       imdb, // type, // season,
     }: // episode,
