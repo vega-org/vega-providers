@@ -13,7 +13,6 @@
     "test:ui": "npm run test:interactive",
     "build": "node build-bundled.js",
     "build:dev": "cross-env SKIP_MINIFY=true node build-bundled.js",
-    "build:old": "node build-simple.js",
     "dev": "node dev-server.js",
     "dev:build": "npm run build && npm run dev",
     "watch": "nodemon",
