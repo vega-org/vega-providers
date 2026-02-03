@@ -11,7 +11,9 @@ const providerDirs = fs
   .readdirSync(providersDir, { withFileTypes: true })
   .filter(
     (dirent) =>
-      dirent.isDirectory() && !dirent.name.startsWith(".") && dirent.name !== "extractors",
+      dirent.isDirectory() &&
+      !dirent.name.startsWith(".") &&
+      dirent.name !== "extractors",
   )
   .map((dirent) => dirent.name);
 
@@ -45,8 +47,8 @@ async function buildProvider(providerName) {
         format: "cjs",
         target: "es2015",
         write: false,
-        external: [], // Bundle everything
-        minify: false, // We'll minify separately if needed
+        external: [],
+        minify: false,
         keepNames: true,
         treeShaking: true,
         outfile: `${moduleName}.js`,
@@ -57,53 +59,51 @@ async function buildProvider(providerName) {
       // Post-process the code for React Native compatibility
       // Remove require statements for built-in modules that aren't available
       code = code.replace(/require\(['"]node:.*?['"]\)/g, "{}");
-      
-      // Fix CommonJS exports for React Native's ProviderManager execution context
-      // The ProviderManager only has `exports` object, not `module`
-      
-      // Extract what's being exported by looking at the __export call
-      // Pattern: __export(xxx_exports, { funcName: () => funcName, ... });
+
       const exportMatch = code.match(/__export\((\w+),\s*\{([^}]+)\}\);/);
-      
+
       if (exportMatch) {
         const exportsVar = exportMatch[1];
         const exportsContent = exportMatch[2];
-        
+
         // Parse the export entries like "funcName: () => funcName"
         const exportEntries = exportsContent
-          .split(',')
-          .map(entry => {
+          .split(",")
+          .map((entry) => {
             const match = entry.trim().match(/(\w+):\s*\(\)\s*=>\s*(\w+)/);
             return match ? match[1] : null;
           })
           .filter(Boolean);
-        
+
         // Replace module.exports pattern
         code = code.replace(
           /module\.exports\s*=\s*__toCommonJS\((\w+)\);/g,
-          ''
+          "",
         );
-        
+
         // Add direct exports assignments at the end
         const directExports = exportEntries
-          .map(name => `exports.${name} = ${name};`)
-          .join('\n');
-        
+          .map((name) => `exports.${name} = ${name};`)
+          .join("\n");
+
         // Add the exports before the final comment
         code = code.replace(
           /\/\/ Annotate the CommonJS export names for ESM import in node:/,
-          `${directExports}\n// Annotate the CommonJS export names for ESM import in node:`
+          `${directExports}\n// Annotate the CommonJS export names for ESM import in node:`,
         );
       }
-      
+
       // Also handle the "0 && (module.exports = {...})" pattern at the end
-      code = code.replace(/0\s*&&\s*\(module\.exports\s*=\s*\{[^}]*\}\);?/g, "");
-      
+      code = code.replace(
+        /0\s*&&\s*\(module\.exports\s*=\s*\{[^}]*\}\);?/g,
+        "",
+      );
+
       // Minify if not skipped
       if (!SKIP_MINIFY) {
         const minified = await minify(code, {
           compress: {
-            drop_console: false,
+            drop_console: true,
             passes: 2,
           },
           mangle: {
@@ -132,7 +132,10 @@ async function buildProvider(providerName) {
         `✓ ${providerName}/${moduleName}.js (${(code.length / 1024).toFixed(1)}kb)`,
       );
     } catch (error) {
-      console.error(`✗ Error building ${providerName}/${moduleName}:`, error.message);
+      console.error(
+        `✗ Error building ${providerName}/${moduleName}:`,
+        error.message,
+      );
     }
   }
 
@@ -141,7 +144,9 @@ async function buildProvider(providerName) {
 
 async function buildAll() {
   const startTime = Date.now();
-  console.log(`Building providers${SKIP_MINIFY ? " (without minification)" : ""}...\n`);
+  console.log(
+    `Building providers${SKIP_MINIFY ? " (without minification)" : ""}...\n`,
+  );
 
   // Clear dist directory
   const distDir = path.join(__dirname, "dist");
