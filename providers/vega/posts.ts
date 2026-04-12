@@ -38,7 +38,9 @@ export const getPosts = async ({
   const baseUrl = await getBaseUrl("Vega");
 
   console.log("vegaGetPosts baseUrl:", providerValue, baseUrl);
-  const url = `${baseUrl}/${filter}/page/${page}/`;
+  const url = filter
+    ? `${baseUrl}/genre/${filter}/page/${page}/`
+    : `${baseUrl}/page/${page}/`;
   console.log("vegaGetPosts url:", url);
   return posts(baseUrl, url, signal, headers, axios, cheerio);
 };
@@ -139,6 +141,7 @@ async function posts(
             $(element).find("a").find("img").attr("data-lazy-src") ||
             $(element).find("a").find("img").attr("data-src") ||
             $(element).find("a").find("img").attr("src") ||
+            $(element).find("img").attr("data-src") ||
             $(element).find("img").attr("src") ||
             "",
         };
